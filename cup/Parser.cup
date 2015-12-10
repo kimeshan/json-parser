@@ -1,0 +1,43 @@
+package Example;
+
+import java_cup.runtime.*;
+
+parser code {:
+	public static void main(String args[]) throws Exception {
+		SymbolFactory sf = new DefaultSymbolFactory();
+		if (args.length==0) new Parser(new Scanner(System.in,sf),sf).parse();
+		else new Parser(new Scanner(new java.io.FileInputStream(args[0]),sf),sf).parse();
+	}
+:}
+
+//Terminals declared for commas, colon, square brackets and braces
+terminal COMMA, COLON, LSQBRACKET, RSQBRACKET, LBRACE, RBRACE;
+
+//Integer, String and Boolean terminals declared
+terminal Integer NUMBER;
+terminal String STRING;
+terminal Boolean BOOLEAN;
+
+//terminal declared for null
+terminal NULL;
+
+//non terminals declared
+non terminal object, pair_list, pair, json_value, array, value_list;
+
+//A valid JSON object can be {} or a { list of pairs } where pair is key:value pair
+object::= LBRACE RBRACE | LBRACE pair_list RBRACE;
+
+//A valid pair list can be one pair(key:value) or a list of comma separated pairs (e.g. {}"name":bob, "age":2})
+pair_list::= pair_list COMMA pair| pair;
+
+//A valid key-value pair is in the format of STRING:value
+pair::= STRING COLON json_value;
+
+//One type of JSON value is an array which is a value list enclosed in square brackets
+array ::= LSQBRACKET value_list RSQBRACKET;
+
+//Avalue list is either one value or multiple values separted by commas
+value_list ::= value_list COMMA json_value | json_value;
+
+//A valid value in JSON is a string("hello"), number(5.45), boolean(true), null, array([1,2]) or object ({"age":20})
+json_value::= STRING | NUMBER | BOOLEAN | NULL | array | object;

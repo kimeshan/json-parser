@@ -1,0 +1,122 @@
+<project name="Compiler" default="jar" basedir=".">
+  <property name="cup"     location="cup"     />
+  <property name="jflex"   location="jflex"    />
+  <property name="src"     location="src"     />
+  <property name="java"    location="java"    />
+  <property name="classes" location="classes" />
+  <property name="dist"    location="jar"    />
+  <property name="lib"     location="lib"     />
+  <property name="bin"     location="bin"     />
+  <property environment="env" />
+
+  <!-- We rely on CUP-11a  JFlex 1.4.1  -->
+  
+  <!-- Here compile time tools -->
+  <path id="binaries">
+    <pathelement location="${bin}" />
+    <fileset dir="${bin}">
+      <include name="**/*.jar" />
+      <include name="**/*.zip" />
+    </fileset>
+    <pathelement path="${java.class.path}" />
+    <pathelement path="${classes}" />
+  </path>
+  
+  <!-- Here, the runtime libraries are stored -->
+  <path id="libraries">
+    <pathelement location="${lib}" />
+    <fileset dir="${lib}">
+      <include name="**/*.jar" />
+      <include name="**/*.zip" />
+    </fileset>
+    <pathelement path="${java.class.path}" />
+  </path>
+
+  <!-- We also use JFlex -->
+  <taskdef name="jflex" 
+           classname="JFlex.anttask.JFlexTask" 
+           classpath="${bin}/JFlex.jar" 
+  />
+   
+  <!-- We also use CUP-11a -->
+  <taskdef name="cup" 
+           classname="java_cup.anttask.CUPTask" 
+           classpath="${bin}/java-cup-11a.jar"
+  />
+
+  <target name="init">
+    <mkdir dir="${classes}"/>
+    <mkdir dir="${java}"/>
+    <mkdir dir="${dist}"/>
+  </target>
+
+
+  <target name="cup" depends="init">
+    <cup srcfile="${cup}/Parser.cup" 
+         destdir="${java}" 
+         interface="true"
+	 parser="Parser"
+    />
+  </target>
+
+  <target name="jflex" depends="init">
+    <jflex file="${jflex}/Scanner.jflex" destdir="${java}" />
+  </target>
+  
+  <!-- copy manual edited sources to automatically generated ones -->
+  <target name="copy_src" depends="jflex,cup">
+   <copy todir="${java}">
+     <fileset dir="${src}" includes="**/**.java" />
+   </copy>
+  </target>
+
+  <target name="compile" depends="copy_src">
+    <javac srcdir="${java}" destdir="${classes}">
+      <classpath refid="libraries" />
+    </javac>
+  </target>
+
+  <target name="jar" depends="compile">
+    <jar jarfile="${dist}/Compiler.jar" basedir="${classes}">
+     <manifest>
+       <attribute name="Main-Class" value="Example.Parser" />
+       <!-- CUP runtime is needed for parsing! -->
+       <attribute name="Class-Path" value="java-cup-11a-runtime.jar" />
+     </manifest>
+    </jar>
+    <!-- Thrid party libraries can only be found by java -jar if they reside in the same dir -->
+    <copy todir="${dist}">
+	<fileset dir="${lib}" includes="**/**.jar"/>
+    </copy>
+  </target>
+
+  <!-- Test the parser in a single run -->
+  <target name="run" depends="jar">
+    <java jar="${dist}/Compiler.jar" fork="true">
+      <arg value="input.test" />
+    </java>
+  </target>
+
+  <!--  unittests for our project -->
+  <!--  <target name="unittest" depends="compile">
+	  <junit printsummary="yes" haltonfailure="yes" fork="yes">
+		  <classpath>
+			  <pathelement location="${classes}" />
+			  <pathelement path="${java.class.path}" />
+			  <fileset dir="${lib}">
+				  <include name="**/*.jar" />
+				  <include name="**/*.zip" />
+			  </fileset>
+		  </classpath>
+		  <formatter type="plain" />
+		  <test name="my.package.my.TestCases" />
+	  </junit>
+  </target>
+  -->
+  
+  <target name="clean">
+    <delete dir="${java}" />
+    <delete dir="${classes}" />
+    <delete dir="${dist}" />
+  </target>
+</project>

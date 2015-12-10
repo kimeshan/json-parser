@@ -8,10 +8,9 @@ This JSON parser will accept an input, and then check if this input is a valid J
 You need to install Java and Ant in order to run JSONParser.
 
 ##Quick start
-Change current directory to ‘minimal’, build using ant and then execute Compiler.jar using the following commands:
+Clone this repository. Build using ant and then execute Compiler.jar using the following commands:
 
 ```
-cd minimal
 ant jar
 java -jar jar/Compiler.jar
 <Type input/source file of JSON here>
@@ -19,7 +18,7 @@ java -jar jar/Compiler.jar
 ```
 
 ##Specify input from a file
-Inputs used to test this JSON parser can be found in the /tests folder which is located inside the minimal folder. Run the parser with one of these test files like this:
+Inputs used to test this JSON parser can be found in the /tests folder. Run the parser with one of these test files like this:
 
 ```
 java -jar jar/Compiler.jar tests/Multiple_key_value_pairs.test

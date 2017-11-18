@@ -1,13 +1,16 @@
-# JSON Lexer & parser
-Written in JFLEX and CUP. Built according to the official ECMA-404 The JSON Data Interchange Standard (see json.org)
+# JSON Lexer & Parser 🌐
+ ![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)
+ ![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)
+ 
+Written in JFLEX and CUP. Built according to the official ECMA-404 The JSON Data Interchange Standard (see http://json.org)
 
-##Overview
+## Overview
 This JSON parser will accept an input, and then check if this input is a valid JSON object according to the official JSON specification at http://json.org. It consists of two files which contain all the logic involved in identifying tokens (Scanner.jflex) and checking that these tokens are structured in the correct JSON format (Parser.cup).
 
-##Requirements
+## Requirements
 You need to install Java and Ant in order to run JSONParser.
 
-##Quick start
+## Quick start
 Clone this repository. Build using ant and then execute Compiler.jar using the following commands:
 
 ```
@@ -17,7 +20,7 @@ java -jar jar/Compiler.jar
 
 ```
 
-##Specify input from a file
+## Specify input from a file
 Inputs used to test this JSON parser can be found in the /tests folder. Run the parser with one of these test files like this:
 
 ```
@@ -27,13 +30,13 @@ java -jar jar/Compiler.jar tests/Multiple_key_value_pairs.test
 
 A list of all inputs in the tests folder with the results can be found in TestResults.pdf.
 
-##Output – interpreting results
+## Output – interpreting results
 If the input is a valid JSON output, then nothing will be output from the console – this means the input was successfully parsed as a JSON object.
 
 Otherwise, either an “illegal character” message will be displayed or a “Parse error” (or similar) will be thrown. This means, an invalid JSON object was inputted i.e. one that does not meet the official JSON specifications.
 
-##Building a JSON Lexer and Parser: How it works
-###Scanner.jflex (inside Scanner folder)
+## Building a JSON Lexer and Parser: How it works
+### Scanner.jflex (inside Scanner folder)
 This is where tokens are described using regular expressions. When the input is scanned and these tokens are detected, the appropriate symbol is returned which is used by Parser.cup (inside Parser folder) to define valid JSON objects.
 
 ```
@@ -85,7 +88,7 @@ Scanning is then done for the various possible JSON values (often using the {mac
 
 Lastly, white space tokens are ignored and no symbol is returned when a whitespace such asa new line or tab is detected when scanning.
 
-###Parser.cup (inside Parser folder)
+### Parser.cup (inside Parser folder)
 The following terminals are declared based on the symbols return from Scanner.jflex:
 * COMMA, COLON, LSQBRACKET, RSQBRACKET, LBRACE, RBRACE
 * NUMBER (Integer)

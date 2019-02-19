@@ -27,8 +27,11 @@ frac = {dot}{digit}+
 scientific_notation = {exp}{digit}+
 any_number = {integer}{frac}?{scientific_notation}?
 
-//Accept any unicode character except certain control characters
-string = [^(\\)(\")(\/)(\b)(\f)(\n)(\r)(\t)(\u)]+
+// Accept zero (empty string) or more valid characters (i.e. any UNICODE
+// character except for unescaped quotation marks ("), backslashes (\), or
+// control characters /u0000 through to /u001f) or valid escape sequences
+string = ([^\u0000-\u001F\"\\]|(\\([\"\\/bfnrt]|(u([0-9a-fA-F]{4})))))*
+
 %%
 
 //Scan for commas, square brackets, braces and colons
